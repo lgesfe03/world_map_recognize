@@ -1,0 +1,14 @@
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\bin\Debug\net8.0-windows\gui.exe
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\bin\Debug\net8.0-windows\gui.deps.json
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\bin\Debug\net8.0-windows\gui.runtimeconfig.json
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\bin\Debug\net8.0-windows\gui.dll
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\bin\Debug\net8.0-windows\gui.pdb
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\gui.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\gui.AssemblyInfoInputs.cache
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\gui.AssemblyInfo.cs
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\gui.csproj.CoreCompileInputs.cache
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\gui.dll
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\refint\gui.dll
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\gui.pdb
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\gui.genruntimeconfig.cache
+C:\Users\26713-Y2012821H\Documents\github\world_map_recognize\gui\obj\Debug\net8.0-windows\ref\gui.dll
