@@ -1,0 +1,5 @@
+# Ignore a 'XXX' directory anywhere in the project
+/bin/
+/obj/
+*/bin/*
+*/obj/*
