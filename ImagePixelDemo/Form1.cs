@@ -19,8 +19,8 @@ namespace ImagePixelDemo
         Label label_result;
 
         Bitmap bitmap;
-        string[] nation_names = new string[] { "Argentina", "Australia", "Belarus", "Belgium", "Bolivia", "Brazil", "Canada" };
-        int[] nation_xy = new int[] { 25, 25, 50, 50, 75, 75, 100, 100, 125, 125, 150, 150, 175, 175, 200, 200 };
+        string[] nation_names = new string[] { "Keelung", "Taipei", "New Taipei", "Taoyuan" };
+        int[] nation_xy = new int[] { 273, 42, 254, 48, 248, 68, 216, 60 };
         int options_number = 3;
 
         public Form1()
@@ -104,7 +104,12 @@ namespace ImagePixelDemo
 
         void LoadImage()
         {
-            string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "D:\\github\\world_map_recognize\\ImagePixelDemo\\image\\", "a.jpg");
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string relativePath = @"..\\..\\..\\image\\taiwan.jpg";
+
+            string combinedPath = Path.Combine(basePath, relativePath);
+
+            string imagePath = Path.GetFullPath(combinedPath);// Resolve the combined path to an absolute path
 
             // MessageBox.Show(imagePath);
 
@@ -126,7 +131,7 @@ namespace ImagePixelDemo
             pictureBox.Refresh();
         }
         void OptionButton_ClickA(object sender, EventArgs e)
-        {   
+        {
             int choose_option_index = 0;
             compare_and_update_result(choose_option_index);
         }
@@ -150,15 +155,23 @@ namespace ImagePixelDemo
             int sx = cx - w / 2;
             int sy = cy - h / 2;
 
+            float alpha = 0.4f;   // 40% transparency 
+
             for (int x = sx; x < sx + w; x++)
             {
                 for (int y = sy; y < sy + h; y++)
                 {
-                    if (x >= 0 && y >= 0 &&
-                        x < bitmap.Width && y < bitmap.Height)
-                    {
-                        bitmap.SetPixel(x, y, Color.Yellow);
-                    }
+                    if (x < 0 || y < 0 || x >= bitmap.Width || y >= bitmap.Height)
+                        continue;
+
+                    Color src = bitmap.GetPixel(x, y);
+                    Color overlay = Color.Yellow;
+
+                    int r = (int)(src.R * (1 - alpha) + overlay.R * alpha);
+                    int g = (int)(src.G * (1 - alpha) + overlay.G * alpha);
+                    int b = (int)(src.B * (1 - alpha) + overlay.B * alpha);
+
+                    bitmap.SetPixel(x, y, Color.FromArgb(src.A, r, g, b));
                 }
             }
         }
@@ -178,9 +191,16 @@ namespace ImagePixelDemo
                     cards_options.Add(value);
                 }
             }
+            foreach (var card in cards_options)
+            {
+                Console.WriteLine($"{"cards_options:"}{card})");
+            }
             answer_index = random.Next(0, options_number);
+            Console.WriteLine($"{"answer_index:"}{answer_index}");
             answer = cards_options[answer_index];
+            Console.WriteLine($"{"answer:"}{answer}");
 
+            Console.WriteLine($"where is number:{answer} ?");
             update_quiz($"where is number:{answer} ?");
             fill_option(cards_options);
         }
@@ -193,43 +213,30 @@ namespace ImagePixelDemo
                 Console.WriteLine($"{console_index}.{nation_names[card]}({card})");
                 if (console_index == 1)
                 {
-                    button_option_A.Text = $"{console_index}.{nation_names[card]}";
+                    button_option_A.Text = $"{"A"}.{nation_names[card]}";
                 }
                 else if (console_index == 2)
                 {
-                    button_option_B.Text = $"{console_index}.{nation_names[card]}";
+                    button_option_B.Text = $"{"B"}.{nation_names[card]}";
                 }
                 else if (console_index == 3)
                 {
-                    button_option_C.Text = $"{console_index}.{nation_names[card]}";
+                    button_option_C.Text = $"{"C"}.{nation_names[card]}";
                 }
-                
+
             }
         }
         void compare_and_update_result(int choose_option_index)
         {
-            if(compare_answer_is_true(choose_option_index))
+            int choose_answer = cards_options[choose_option_index];
+            if (choose_answer == answer)
             {
-                update_result($"Correct! {nation_names[cards_options[choose_option_index]]}({cards_options[choose_option_index]})");
-            }else
-            {
-                update_result($"False! not {nation_names[cards_options[choose_option_index]]}({cards_options[choose_option_index]})");
-            }
-        }
-        bool compare_answer_is_true(int choose_option_index)
-        {
-            Console.WriteLine($"You choose: [{choose_option_index + 1}]  {nation_names[cards_options[choose_option_index]]}({cards_options[choose_option_index]}) vs answer: {nation_names[cards_options[answer_index]]}({cards_options[answer_index]})");
-            if (cards_options[choose_option_index] == cards_options[answer_index])
-            {
-                Console.WriteLine($"Correct! {nation_names[cards_options[choose_option_index]]}({cards_options[choose_option_index]})");
-                return true;
+                update_result($"Correct! {nation_names[choose_answer]}({choose_answer})");
             }
             else
             {
-                Console.WriteLine($"False! not {nation_names[cards_options[choose_option_index]]}({cards_options[choose_option_index]})");
-                return false;
+                update_result($"False! not {nation_names[choose_answer]}({choose_answer}), answer is {nation_names[answer]}({answer})");
             }
-
         }
     }
 }
