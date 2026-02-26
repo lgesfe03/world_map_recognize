@@ -102,14 +102,19 @@ namespace ImagePixelDemo
 
         void LoadImage()
         {
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string relativePath = @"..\\..\\..\\image\\taiwan.jpg";
+            
+            string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                "image",
+                "taiwan.jpg"
+            );
+            Console.WriteLine($"{"BaseDirectory:"}{AppDomain.CurrentDomain.BaseDirectory})");
+            Console.WriteLine($"{"Image Path:"}{imagePath})");
 
-            string combinedPath = Path.Combine(basePath, relativePath);
-
-            string imagePath = Path.GetFullPath(combinedPath);// Resolve the combined path to an absolute path
-
-            // MessageBox.Show(imagePath);
+            if (!File.Exists(imagePath))
+            {
+                MessageBox.Show($"Image not found:\n{imagePath}");
+                return;
+            }
 
             bitmap = new Bitmap(imagePath);
             pictureBox.Image = bitmap;
