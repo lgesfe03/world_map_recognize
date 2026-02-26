@@ -7,11 +7,9 @@ namespace ImagePixelDemo
 {
     public class Form1 : Form
     {
-        int answer_index;
         int answer;
         List<int> cards_options;
         PictureBox pictureBox;
-        Button paintButton;
         Button button_option_A;
         Button button_option_B;
         Button button_option_C;
@@ -43,14 +41,6 @@ namespace ImagePixelDemo
                 Height = 400,
                 SizeMode = PictureBoxSizeMode.Zoom
             };
-
-            paintButton = new Button()
-            {
-                Text = "dye (100,100)",
-                Dock = DockStyle.Bottom,
-                Height = 40
-            };
-            paintButton.Click += PaintButton_Click;
 
             label_quiz = new Label()
             {
@@ -94,7 +84,6 @@ namespace ImagePixelDemo
 
 
             Controls.Add(pictureBox);
-            // Controls.Add(paintButton);
             Controls.Add(label_quiz);
             Controls.Add(label_result);
             Controls.Add(button_option_A);
@@ -124,12 +113,6 @@ namespace ImagePixelDemo
         {
             label_result.Text = string_in;
         }
-
-        void PaintButton_Click(object sender, EventArgs e)
-        {
-            PaintArea(100, 100, 50, 50);
-            pictureBox.Refresh();
-        }
         void OptionButton_ClickA(object sender, EventArgs e)
         {
             int choose_option_index = 0;
@@ -145,9 +128,9 @@ namespace ImagePixelDemo
             int choose_option_index = 2;
             compare_and_update_result(choose_option_index);
         }
-        void PaintQuizArea(int answer_index)
+        void PaintQuizArea(int index)
         {
-            PaintArea(nation_xy[answer_index * 2], nation_xy[answer_index * 2 + 1], 25, 25);
+            PaintArea(nation_xy[index * 2], nation_xy[index * 2 + 1], 25, 25);
             pictureBox.Refresh();
         }
         void PaintArea(int cx, int cy, int w, int h)
@@ -195,12 +178,10 @@ namespace ImagePixelDemo
             {
                 Console.WriteLine($"{"cards_options:"}{card})");
             }
-            answer_index = random.Next(0, options_number);
-            Console.WriteLine($"{"answer_index:"}{answer_index}");
+            int answer_index = random.Next(0, options_number);
             answer = cards_options[answer_index];
-            Console.WriteLine($"{"answer:"}{answer}");
 
-            Console.WriteLine($"where is number:{answer} ?");
+            Console.WriteLine($"where is number:{answer} ?, {"answer_index:"}{answer_index}");
             update_quiz($"where is number:{answer + 1} ?");
             fill_option(cards_options);
         }
