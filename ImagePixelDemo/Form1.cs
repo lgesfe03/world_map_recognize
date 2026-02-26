@@ -18,8 +18,8 @@ namespace ImagePixelDemo
         Label label_result;
 
         Bitmap bitmap;
-        string[] nation_names = new string[] { "Keelung", "Taipei", "New Taipei", "Taoyuan" };
-        int[] nation_xy = new int[] { 273, 42, 254, 48, 248, 68, 216, 60 };
+        string[] nation_names = new string[] { "Keelung", "Taipei", "New Taipei", "Taoyuan", "Hsinchu", "Miaoli", "Taichung", "Changhua", "Yunlin", "Chiayi", "Tainan", "Kaohsiung", "Pingtung", "Taitung", "Hualien", "Yilan", "Nantou", "Penghu" };
+        int[] nation_xy = new int[] { 274, 42, 255, 47, 253, 71, 214, 62, 213, 96, 185, 122, 172, 155, 137, 184, 128, 214, 153, 247, 122, 284, 155, 299, 152, 342, 204, 318, 239, 204, 265, 109, 193, 204, 34, 210 };
         int options_number = 3;
 
         public Form1()
@@ -31,6 +31,7 @@ namespace ImagePixelDemo
         }
         void InitUI()
         {
+            Console.WriteLine($"{"nation_names.Length:"}{nation_names.Length})");
             this.Text = "Image Pixel Demo";
             this.Width = 800;
             this.Height = 600;
@@ -236,11 +237,11 @@ namespace ImagePixelDemo
             int choose_answer = cards_options[choose_option_index];
             if (choose_answer == answer)
             {
-                update_result($"Correct! {nation_names[choose_answer]}({choose_answer})");
+                update_result($"Correct! {nation_names[choose_answer]}");
             }
             else
             {
-                update_result($"False! not {nation_names[choose_answer]}({choose_answer}), answer is {nation_names[answer]}({answer})");
+                update_result($"False! not {nation_names[choose_answer]}({choose_answer + 1}), answer is {nation_names[answer]}({answer + 1})");
             }
         }
     }
