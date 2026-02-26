@@ -28,7 +28,7 @@ namespace ImagePixelDemo
             InitUI();
             LoadImage();
             shuffle_quiz();
-            PaintQuizArea(answer_index);
+            PaintQuizArea(answer);
         }
 
         void InitUI()
@@ -201,7 +201,7 @@ namespace ImagePixelDemo
             Console.WriteLine($"{"answer:"}{answer}");
 
             Console.WriteLine($"where is number:{answer} ?");
-            update_quiz($"where is number:{answer} ?");
+            update_quiz($"where is number:{answer + 1} ?");
             fill_option(cards_options);
         }
         void fill_option(List<int> cards_options)
