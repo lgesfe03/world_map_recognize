@@ -123,16 +123,19 @@ namespace ImagePixelDemo
         }
         void OptionButton_ClickA(object sender, EventArgs e)
         {
+            switch_all_option_button(false);
             int choose_option_index = 0;
             compare_and_update_result(choose_option_index);
         }
         void OptionButton_ClickB(object sender, EventArgs e)
         {
+            switch_all_option_button(false);
             int choose_option_index = 1;
             compare_and_update_result(choose_option_index);
         }
         void OptionButton_ClickC(object sender, EventArgs e)
         {
+            switch_all_option_button(false);
             int choose_option_index = 2;
             compare_and_update_result(choose_option_index);
         }
@@ -141,6 +144,13 @@ namespace ImagePixelDemo
             LoadImage();
             shuffle_quiz();
             PaintQuizArea(answer);
+            switch_all_option_button(true);
+        }
+        void switch_all_option_button(bool onoff)
+        {
+            button_option_A.Enabled = onoff;
+            button_option_B.Enabled = onoff;
+            button_option_C.Enabled = onoff;
         }
         void PaintQuizArea(int index)
         {
