@@ -13,6 +13,7 @@ namespace ImagePixelDemo
         Button button_option_A;
         Button button_option_B;
         Button button_option_C;
+        Button button_option_Refresh;
         Label label_quiz;
         Label label_result;
 
@@ -28,7 +29,6 @@ namespace ImagePixelDemo
             shuffle_quiz();
             PaintQuizArea(answer);
         }
-
         void InitUI()
         {
             this.Text = "Image Pixel Demo";
@@ -53,7 +53,7 @@ namespace ImagePixelDemo
 
             label_result = new Label()
             {
-                Text = "Result: ",
+                Text = "",
                 Dock = DockStyle.Bottom,
                 Height = 40
             };
@@ -82,6 +82,13 @@ namespace ImagePixelDemo
             };
             button_option_C.Click += OptionButton_ClickC;
 
+            button_option_Refresh = new Button()
+            {
+                Text = "Refresh",
+                Dock = DockStyle.Right,
+                Height = 40
+            };
+            button_option_Refresh.Click += OptionButton_Refresh;
 
             Controls.Add(pictureBox);
             Controls.Add(label_quiz);
@@ -89,6 +96,7 @@ namespace ImagePixelDemo
             Controls.Add(button_option_A);
             Controls.Add(button_option_B);
             Controls.Add(button_option_C);
+            Controls.Add(button_option_Refresh);
         }
 
         void LoadImage()
@@ -127,6 +135,12 @@ namespace ImagePixelDemo
         {
             int choose_option_index = 2;
             compare_and_update_result(choose_option_index);
+        }
+        void OptionButton_Refresh(object sender, EventArgs e)
+        {
+            LoadImage();
+            shuffle_quiz();
+            PaintQuizArea(answer);
         }
         void PaintQuizArea(int index)
         {
