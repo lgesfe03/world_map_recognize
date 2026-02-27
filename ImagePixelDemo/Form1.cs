@@ -7,9 +7,11 @@ namespace ImagePixelDemo
 {
     public class Form1 : Form
     {
+        int quest_this_round;
         int score;
-        int answer;
-        List<int> cards_options;
+        List<int> history_quest;
+        List<int> option_list_each_round;
+        Random random;
         PictureBox pictureBox;
         Button button_option_A;
         Button button_option_B;
@@ -29,12 +31,14 @@ namespace ImagePixelDemo
             InitVariable();
             InitUI();
             LoadImage();
-            shuffle_quiz();
-            PaintQuizArea(answer);
+            prepare_quest_and_option();
+            PaintQuizArea(quest_this_round);
         }
         void InitVariable()
         {
-            score = 0;
+            history_quest = new List<int>();
+            option_list_each_round = new List<int>();
+            random = new Random();
         }
         void InitUI()
         {
@@ -61,7 +65,7 @@ namespace ImagePixelDemo
 
             label_score = new Label()
             {
-                Text = $"score:{score}",
+                Text = $"score:{history_quest.Count}",
                 Dock = DockStyle.Bottom,
                 Height = 40
             };
@@ -117,7 +121,7 @@ namespace ImagePixelDemo
 
         void LoadImage()
         {
-            
+
             string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
                 "image",
                 "taiwan.jpg"
@@ -167,8 +171,8 @@ namespace ImagePixelDemo
         void OptionButton_Refresh(object sender, EventArgs e)
         {
             LoadImage();
-            shuffle_quiz();
-            PaintQuizArea(answer);
+            prepare_quest_and_option();
+            PaintQuizArea(quest_this_round);
             switch_all_option_button(true);
             update_result("");
             update_score();
@@ -209,34 +213,51 @@ namespace ImagePixelDemo
                 }
             }
         }
-        void shuffle_quiz()
+        void shuffle_quest_not_existed()
         {
-            Random random = new Random();
-            cards_options = new List<int>();
+            Console.WriteLine($"history_quest count:{history_quest.Count}");
             while (true)
             {
-                if (cards_options.Count == options_number)
+                int temp_new_quest = random.Next(0, nation_names.Length);
+                if (!history_quest.Contains(temp_new_quest))
+                {
+                    Console.WriteLine($"temp_new_quest :{temp_new_quest}");
+                    quest_this_round = temp_new_quest;
+                    break;
+                }
+                else if (history_quest.Count >= nation_names.Length)
+                {
+                    Console.WriteLine($"all quest had been shuffled :{nation_names.Length}");
+                    history_quest.Clear();
+                }
+            }
+        }
+        void fill_remain_option()
+        {
+            option_list_each_round.Clear();
+            option_list_each_round.Add(quest_this_round);
+            while (true)
+            {
+                if (option_list_each_round.Count == options_number)
                 {
                     break;
                 }
                 int value = random.Next(0, nation_names.Length);
-                if (!cards_options.Contains(value))
+                if (!option_list_each_round.Contains(value))
                 {
-                    cards_options.Add(value);
+                    option_list_each_round.Add(value);
                 }
             }
-            foreach (var card in cards_options)
+            // shuffle option_list_each_round 
+            for (int i = option_list_each_round.Count - 1; i >= 0; i--)
             {
-                Console.WriteLine($"{"cards_options:"}{card})");
+                int transIndex = random.Next(0, i);
+                int temp = option_list_each_round[transIndex];
+                option_list_each_round[transIndex] = option_list_each_round[i];
+                option_list_each_round[i] = temp;
             }
-            int answer_index = random.Next(0, options_number);
-            answer = cards_options[answer_index];
-
-            Console.WriteLine($"where is number:{answer} ?, {"answer_index:"}{answer_index}");
-            update_quiz($"where is number:{answer + 1} ?");
-            fill_option(cards_options);
         }
-        void fill_option(List<int> cards_options)
+        void fill_option_button(List<int> cards_options)
         {
             int console_index = 0;
             foreach (var card in cards_options)
@@ -255,23 +276,47 @@ namespace ImagePixelDemo
                 {
                     button_option_C.Text = $"{"C"}.{nation_names[card]}";
                 }
-
+            }
+        }
+        void prepare_quest_and_option()
+        {
+            shuffle_quest_not_existed();
+            fill_remain_option();
+            update_quiz($"where is number:{quest_this_round + 1} ?");
+            fill_option_button(option_list_each_round);
+        }
+        bool IsAnswerCorrect(int choose_option_index)
+        {
+            int choose_answer = option_list_each_round[choose_option_index];
+            if (choose_answer == quest_this_round)
+            {
+                update_result($"Correct! {nation_names[choose_answer]}");
+                return true;
+            }
+            else
+            {
+                update_result($"False! not {nation_names[choose_answer]}({choose_answer + 1}), answer is {nation_names[quest_this_round]}({quest_this_round + 1})");
+                return false;
             }
         }
         void compare_and_update_result(int choose_option_index)
         {
-            int choose_answer = cards_options[choose_option_index];
-            if (choose_answer == answer)
+            bool is_correct = IsAnswerCorrect(choose_option_index);
+            if (is_correct)
             {
-                update_result($"Correct! {nation_names[choose_answer]}");
-                score ++;
+                history_quest.Add(quest_this_round);
+                score++;
                 update_score();
+                if (score % nation_names.Length == 0)
+                {
+                    MessageBox.Show("Congratulate! All request done!");
+                }
             }
             else
             {
-                update_result($"False! not {nation_names[choose_answer]}({choose_answer + 1}), answer is {nation_names[answer]}({answer + 1})");
                 update_score();
                 score = 0;
+                history_quest.Clear();
             }
         }
     }
