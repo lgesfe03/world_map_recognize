@@ -1,0 +1,17 @@
+[
+    {
+        "CityName": "Keelung",
+        "Latitude": 274,
+        "Longitude": 42
+    },
+    {
+        "CityName": "Taipei",
+        "Latitude": 255,
+        "Longitude": 47
+    },
+    {
+        "CityName": "New Taipei",
+        "Latitude": 253,
+        "Longitude": 71
+    }
+]

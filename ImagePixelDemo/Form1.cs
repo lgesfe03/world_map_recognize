@@ -1,7 +1,16 @@
 using System;
 using System.Drawing;
+using System.Text.Json;
 using System.Windows.Forms;
 using System.Collections.Generic;
+
+public class CityData
+{
+    public string CityName { get; set; }
+    public int Latitude { get; set; }
+    public int Longitude { get; set; }
+    // ... other properties
+}
 
 namespace ImagePixelDemo
 {
@@ -29,6 +38,7 @@ namespace ImagePixelDemo
         public Form1()
         {
             InitVariable();
+            // InitJson();
             InitUI();
             LoadImage();
             prepare_quest_and_option();
@@ -39,6 +49,28 @@ namespace ImagePixelDemo
             history_quest = new List<int>();
             option_list_each_round = new List<int>();
             random = new Random();
+        }
+        void InitJson()
+        {
+            string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                "json",
+                "taiwan_cities.json"
+            );
+            Console.WriteLine($"{"BaseDirectory:"}{AppDomain.CurrentDomain.BaseDirectory})");
+            Console.WriteLine($"{"Image Path:"}{jsonPath})");
+
+            if (!File.Exists(jsonPath))
+            {
+                MessageBox.Show($"Json not found:\n{jsonPath}");
+                return;
+            }
+            string jsonString = File.ReadAllText(jsonPath);
+            List<CityData> people = JsonSerializer.Deserialize<List<CityData>>(jsonString);
+            CityData[] cities = JsonSerializer.Deserialize<CityData[]>(jsonString);
+            foreach (var city in cities)
+            {
+                Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
+            }
         }
         void InitUI()
         {
