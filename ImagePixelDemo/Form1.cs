@@ -7,6 +7,7 @@ namespace ImagePixelDemo
 {
     public class Form1 : Form
     {
+        int score;
         int answer;
         List<int> cards_options;
         PictureBox pictureBox;
@@ -15,6 +16,7 @@ namespace ImagePixelDemo
         Button button_option_C;
         Button button_option_Refresh;
         Label label_quiz;
+        Label label_score;
         Label label_result;
 
         Bitmap bitmap;
@@ -24,10 +26,15 @@ namespace ImagePixelDemo
 
         public Form1()
         {
+            InitVariable();
             InitUI();
             LoadImage();
             shuffle_quiz();
             PaintQuizArea(answer);
+        }
+        void InitVariable()
+        {
+            score = 0;
         }
         void InitUI()
         {
@@ -50,6 +57,13 @@ namespace ImagePixelDemo
                 Dock = DockStyle.Right,
                 Height = 40,
                 // AutoSize = true
+            };
+
+            label_score = new Label()
+            {
+                Text = $"score:{score}",
+                Dock = DockStyle.Bottom,
+                Height = 40
             };
 
             label_result = new Label()
@@ -93,6 +107,7 @@ namespace ImagePixelDemo
 
             Controls.Add(pictureBox);
             Controls.Add(label_quiz);
+            Controls.Add(label_score);
             Controls.Add(label_result);
             Controls.Add(button_option_A);
             Controls.Add(button_option_B);
@@ -123,6 +138,10 @@ namespace ImagePixelDemo
         {
             label_quiz.Text = string_in;
         }
+        void update_score()
+        {
+            label_score.Text = $"score:{score}";
+        }
         void update_result(string string_in)
         {
             label_result.Text = string_in;
@@ -151,6 +170,8 @@ namespace ImagePixelDemo
             shuffle_quiz();
             PaintQuizArea(answer);
             switch_all_option_button(true);
+            update_result("");
+            update_score();
         }
         void switch_all_option_button(bool onoff)
         {
@@ -243,10 +264,14 @@ namespace ImagePixelDemo
             if (choose_answer == answer)
             {
                 update_result($"Correct! {nation_names[choose_answer]}");
+                score ++;
+                update_score();
             }
             else
             {
                 update_result($"False! not {nation_names[choose_answer]}({choose_answer + 1}), answer is {nation_names[answer]}({answer + 1})");
+                update_score();
+                score = 0;
             }
         }
     }
