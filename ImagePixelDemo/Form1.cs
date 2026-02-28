@@ -269,7 +269,7 @@ namespace ImagePixelDemo
             option_list_each_round.Add(quest_this_round);
             while (true)
             {
-                if (option_list_each_round.Count == options_number)
+                if (option_list_each_round.Count >= options_number)
                 {
                     break;
                 }
@@ -280,11 +280,11 @@ namespace ImagePixelDemo
                 }
             }
             // shuffle option_list_each_round 
-            for (int i = option_list_each_round.Count - 1; i >= 0; i--)
+            for (int i = option_list_each_round.Count - 1; i > 0; i--)
             {
-                int transIndex = random.Next(0, i);
-                int temp = option_list_each_round[transIndex];
-                option_list_each_round[transIndex] = option_list_each_round[i];
+                int j = random.Next(0, i + 1);
+                int temp = option_list_each_round[j];
+                option_list_each_round[j] = option_list_each_round[i];
                 option_list_each_round[i] = temp;
             }
         }
