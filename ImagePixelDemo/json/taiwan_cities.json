@@ -13,5 +13,80 @@
         "CityName": "New Taipei",
         "Latitude": 253,
         "Longitude": 71
+    },
+    {
+        "CityName": "Taoyuan",
+        "Latitude": 214,
+        "Longitude": 62
+    },
+    {
+        "CityName": "Hsinchu",
+        "Latitude": 213,
+        "Longitude": 96
+    },
+    {
+        "CityName": "Miaoli",
+        "Latitude": 185,
+        "Longitude": 122
+    },
+    {
+        "CityName": "Taichung",
+        "Latitude": 172,
+        "Longitude": 155
+    },
+    {
+        "CityName": "Changhua",
+        "Latitude": 137,
+        "Longitude": 184
+    },
+    {
+        "CityName": "Yunlin",
+        "Latitude": 128,
+        "Longitude": 214
+    },
+    {
+        "CityName": "Chiayi",
+        "Latitude": 153,
+        "Longitude": 247
+    },
+    {
+        "CityName": "Tainan",
+        "Latitude": 122,
+        "Longitude": 284
+    },
+    {
+        "CityName": "Kaohsiung",
+        "Latitude": 155,
+        "Longitude": 299
+    },
+    {
+        "CityName": "Pingtung",
+        "Latitude": 152,
+        "Longitude": 342
+    },
+    {
+        "CityName": "Taitung",
+        "Latitude": 204,
+        "Longitude": 318
+    },
+    {
+        "CityName": "Hualien",
+        "Latitude": 239,
+        "Longitude": 204
+    },
+    {
+        "CityName": "Yilan",
+        "Latitude": 265,
+        "Longitude": 109
+    },
+    {
+        "CityName": "Nantou",
+        "Latitude": 193,
+        "Longitude": 204
+    },
+    {
+        "CityName": "Penghu",
+        "Latitude": 34,
+        "Longitude": 210
     }
 ]

@@ -31,14 +31,13 @@ namespace ImagePixelDemo
         Label label_result;
 
         Bitmap bitmap;
-        string[] nation_names = new string[] { "Keelung", "Taipei", "New Taipei", "Taoyuan", "Hsinchu", "Miaoli", "Taichung", "Changhua", "Yunlin", "Chiayi", "Tainan", "Kaohsiung", "Pingtung", "Taitung", "Hualien", "Yilan", "Nantou", "Penghu" };
-        int[] nation_xy = new int[] { 274, 42, 255, 47, 253, 71, 214, 62, 213, 96, 185, 122, 172, 155, 137, 184, 128, 214, 153, 247, 122, 284, 155, 299, 152, 342, 204, 318, 239, 204, 265, 109, 193, 204, 34, 210 };
+        List<CityData> cities;
         int options_number = 3;
 
         public Form1()
         {
             InitVariable();
-            // InitJson();
+            InitJson();
             InitUI();
             LoadImage();
             prepare_quest_and_option();
@@ -65,8 +64,9 @@ namespace ImagePixelDemo
                 return;
             }
             string jsonString = File.ReadAllText(jsonPath);
-            List<CityData> people = JsonSerializer.Deserialize<List<CityData>>(jsonString);
-            CityData[] cities = JsonSerializer.Deserialize<CityData[]>(jsonString);
+            cities = JsonSerializer.Deserialize<List<CityData>>(jsonString);
+            Console.WriteLine($"{"cities.Count:"}{cities.Count()})");
+
             foreach (var city in cities)
             {
                 Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
@@ -74,7 +74,6 @@ namespace ImagePixelDemo
         }
         void InitUI()
         {
-            Console.WriteLine($"{"nation_names.Length:"}{nation_names.Length})");
             this.Text = "Image Pixel Demo";
             this.Width = 800;
             this.Height = 600;
@@ -217,7 +216,7 @@ namespace ImagePixelDemo
         }
         void PaintQuizArea(int index)
         {
-            PaintArea(nation_xy[index * 2], nation_xy[index * 2 + 1], 25, 25);
+            PaintArea(cities[index].Latitude, cities[index].Longitude, 25, 25);
             pictureBox.Refresh();
         }
         void PaintArea(int cx, int cy, int w, int h)
@@ -250,16 +249,16 @@ namespace ImagePixelDemo
             Console.WriteLine($"history_quest count:{history_quest.Count}");
             while (true)
             {
-                int temp_new_quest = random.Next(0, nation_names.Length);
+                int temp_new_quest = random.Next(0, cities.Count);
                 if (!history_quest.Contains(temp_new_quest))
                 {
                     Console.WriteLine($"temp_new_quest :{temp_new_quest}");
                     quest_this_round = temp_new_quest;
                     break;
                 }
-                else if (history_quest.Count >= nation_names.Length)
+                else if (history_quest.Count >= cities.Count)
                 {
-                    Console.WriteLine($"all quest had been shuffled :{nation_names.Length}");
+                    Console.WriteLine($"all quest had been shuffled :{cities.Count}");
                     history_quest.Clear();
                 }
             }
@@ -274,7 +273,7 @@ namespace ImagePixelDemo
                 {
                     break;
                 }
-                int value = random.Next(0, nation_names.Length);
+                int value = random.Next(0, cities.Count);
                 if (!option_list_each_round.Contains(value))
                 {
                     option_list_each_round.Add(value);
@@ -295,18 +294,18 @@ namespace ImagePixelDemo
             foreach (var card in cards_options)
             {
                 console_index++;
-                Console.WriteLine($"{console_index}.{nation_names[card]}({card})");
+                Console.WriteLine($"{console_index}.{cities[card].CityName}({card})");
                 if (console_index == 1)
                 {
-                    button_option_A.Text = $"{"A"}.{nation_names[card]}";
+                    button_option_A.Text = $"{"A"}.{cities[card].CityName}";
                 }
                 else if (console_index == 2)
                 {
-                    button_option_B.Text = $"{"B"}.{nation_names[card]}";
+                    button_option_B.Text = $"{"B"}.{cities[card].CityName}";
                 }
                 else if (console_index == 3)
                 {
-                    button_option_C.Text = $"{"C"}.{nation_names[card]}";
+                    button_option_C.Text = $"{"C"}.{cities[card].CityName}";
                 }
             }
         }
@@ -322,12 +321,12 @@ namespace ImagePixelDemo
             int choose_answer = option_list_each_round[choose_option_index];
             if (choose_answer == quest_this_round)
             {
-                update_result($"Correct! {nation_names[choose_answer]}");
+                update_result($"Correct! {cities[choose_answer].CityName}");
                 return true;
             }
             else
             {
-                update_result($"False! not {nation_names[choose_answer]}({choose_answer + 1}), answer is {nation_names[quest_this_round]}({quest_this_round + 1})");
+                update_result($"False! not {cities[choose_answer].CityName}({choose_answer + 1}), answer is {cities[quest_this_round].CityName}({quest_this_round + 1})");
                 return false;
             }
         }
@@ -339,7 +338,7 @@ namespace ImagePixelDemo
                 history_quest.Add(quest_this_round);
                 score++;
                 update_score();
-                if (score % nation_names.Length == 0)
+                if (score % cities.Count == 0)
                 {
                     MessageBox.Show("Congratulate! All request done!");
                 }
