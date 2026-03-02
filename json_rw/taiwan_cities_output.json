@@ -1,0 +1,92 @@
+[
+  {
+    "CityName": "Keelung",
+    "Latitude": 269,
+    "Longitude": 37
+  },
+  {
+    "CityName": "Taipei",
+    "Latitude": 250,
+    "Longitude": 42
+  },
+  {
+    "CityName": "New Taipei",
+    "Latitude": 248,
+    "Longitude": 66
+  },
+  {
+    "CityName": "Taoyuan",
+    "Latitude": 209,
+    "Longitude": 57
+  },
+  {
+    "CityName": "Hsinchu",
+    "Latitude": 208,
+    "Longitude": 91
+  },
+  {
+    "CityName": "Miaoli",
+    "Latitude": 180,
+    "Longitude": 117
+  },
+  {
+    "CityName": "Taichung",
+    "Latitude": 167,
+    "Longitude": 150
+  },
+  {
+    "CityName": "Changhua",
+    "Latitude": 132,
+    "Longitude": 179
+  },
+  {
+    "CityName": "Yunlin",
+    "Latitude": 123,
+    "Longitude": 209
+  },
+  {
+    "CityName": "Chiayi",
+    "Latitude": 148,
+    "Longitude": 242
+  },
+  {
+    "CityName": "Tainan",
+    "Latitude": 117,
+    "Longitude": 279
+  },
+  {
+    "CityName": "Kaohsiung",
+    "Latitude": 150,
+    "Longitude": 294
+  },
+  {
+    "CityName": "Pingtung",
+    "Latitude": 147,
+    "Longitude": 337
+  },
+  {
+    "CityName": "Taitung",
+    "Latitude": 199,
+    "Longitude": 313
+  },
+  {
+    "CityName": "Hualien",
+    "Latitude": 234,
+    "Longitude": 199
+  },
+  {
+    "CityName": "Yilan",
+    "Latitude": 260,
+    "Longitude": 104
+  },
+  {
+    "CityName": "Nantou",
+    "Latitude": 188,
+    "Longitude": 199
+  },
+  {
+    "CityName": "Penghu",
+    "Latitude": 29,
+    "Longitude": 205
+  }
+]
