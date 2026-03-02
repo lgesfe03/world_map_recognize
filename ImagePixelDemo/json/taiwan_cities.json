@@ -2,7 +2,7 @@
     {
         "CityName": "Keelung",
         "Latitude": 269,
-        "Longitude": 37
+        "Longitude": 39
     },
     {
         "CityName": "Taipei",
@@ -86,7 +86,7 @@
     },
     {
         "CityName": "Penghu",
-        "Latitude": 29,
-        "Longitude": 205
+        "Latitude": 36,
+        "Longitude": 238
     }
 ]

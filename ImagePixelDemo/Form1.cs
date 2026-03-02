@@ -182,7 +182,7 @@ namespace ImagePixelDemo
                     // g.Clear(Color.White); 
 
                     // 3. Define the Font and Brush for the text
-                    using (Font myFont = new Font("Arial", 8, FontStyle.Bold))
+                    using (Font myFont = new Font("Arial", 6, FontStyle.Regular))
                     using (Brush myBrush = new SolidBrush(Color.Black))
                     {
                         // Set rendering hint for smooth text
@@ -245,10 +245,67 @@ namespace ImagePixelDemo
         }
         void PaintQuizArea(int index)
         {
-            PaintArea(List_cities[index].Latitude, List_cities[index].Longitude, 25, 25);
+            // PaintArea(List_cities[index].Latitude, List_cities[index].Longitude, 25, 25);//old method
+            // Apply the color fill to white pixels
+            PaintWhiteConnectedArea(List_cities[index].Latitude, List_cities[index].Longitude);
+            // PaintNumberArea(List_cities[index].Latitude, List_cities[index].Longitude, 25, 25);
             pictureBox.Refresh();
         }
-        void PaintArea(int cx, int cy, int w, int h)
+        bool IsWhite(Color c)
+        {
+            // Tolerate a slight error, avoid JPG compression issues.
+            return c.R > 240 && c.G > 240 && c.B > 240;
+        }
+        void PaintWhiteConnectedArea(int cx, int cy)
+        {
+            if (cx < 0 || cy < 0 || cx >= bitmap.Width || cy >= bitmap.Height)
+                return;
+
+            Color startColor = bitmap.GetPixel(cx, cy);
+            if (!IsWhite(startColor))
+            {
+                MessageBox.Show($"Not white cx:{cx}, cy:{cy}");
+                return; // If the starting point is not white, then skip it.
+            }
+
+            float alpha = 0.4f;
+            Color overlay = Color.Yellow;
+
+            bool[,] visited = new bool[bitmap.Width, bitmap.Height];
+            Stack<Point> stack = new Stack<Point>();
+            stack.Push(new Point(cx, cy));
+
+            while (stack.Count > 0)
+            {
+                Point p = stack.Pop();
+
+                if (p.X < 0 || p.Y < 0 || p.X >= bitmap.Width || p.Y >= bitmap.Height)
+                    continue;
+
+                if (visited[p.X, p.Y])
+                    continue;
+
+                Color src = bitmap.GetPixel(p.X, p.Y);
+                if (!IsWhite(src))
+                    continue;
+
+                visited[p.X, p.Y] = true;
+
+                // alpha blend
+                int r = (int)(src.R * (1 - alpha) + overlay.R * alpha);
+                int g = (int)(src.G * (1 - alpha) + overlay.G * alpha);
+                int b = (int)(src.B * (1 - alpha) + overlay.B * alpha);
+
+                bitmap.SetPixel(p.X, p.Y, Color.FromArgb(src.A, r, g, b));
+
+                // Spread in four directions
+                stack.Push(new Point(p.X + 1, p.Y));
+                stack.Push(new Point(p.X - 1, p.Y));
+                stack.Push(new Point(p.X, p.Y + 1));
+                stack.Push(new Point(p.X, p.Y - 1));
+            }
+        }
+        void PaintNumberArea(int cx, int cy, int w, int h)
         {
             int sx = cx - w / 4;
             int sy = cy - h / 4;
