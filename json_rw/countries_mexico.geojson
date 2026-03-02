@@ -1,0 +1,25 @@
+{
+  "type" : "FeatureCollection", 
+  "features" : [
+    {
+      "type" : "Feature", 
+      "id" : 23, 
+      "geometry" : 
+      {
+        "type" : "Point", 
+        "coordinates" : [
+          -101.553997316301, 23.8743606809359
+        ]
+      }, 
+      "properties" : {
+        "longitude" : -101.55399731630118, 
+        "latitude" : 23.874360680935919, 
+        "COUNTRY" : "Mexico", 
+        "ISO" : "MX", 
+        "COUNTRYAFF" : "Mexico", 
+        "AFF_ISO" : "MX", 
+        "ObjectId" : 23
+      }
+    }
+  ]
+}
