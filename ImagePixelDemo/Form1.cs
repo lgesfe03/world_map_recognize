@@ -73,82 +73,118 @@ namespace ImagePixelDemo
                 Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
             }
         }
+        Button CreateButton(string text, EventHandler click)
+        {
+            Button btn = new Button()
+            {
+                Text = text,
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+            };
+            btn.Click += click;
+            return btn;
+        }
         void InitUI()
         {
             this.Text = "Image Pixel Demo";
             this.Width = 800;
             this.Height = 600;
 
+            // ===== Main Layout =====
+            TableLayoutPanel mainLayout = new TableLayoutPanel()
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 1,
+                ColumnCount = 2,
+            };
+            mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));// image
+            mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));// right part with quest, button, result + score
+
+            TableLayoutPanel rightLayout = new TableLayoutPanel()
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 3,
+                ColumnCount = 1
+                // Padding = new Padding(10)
+            };
+            // rightLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40)); // quest
+            rightLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 33));
+            rightLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 34));
+            rightLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 33));
+
+            // ===== PictureBox =====
             pictureBox = new PictureBox()
             {
-                Dock = DockStyle.Top,
-                Height = 400,
-                SizeMode = PictureBoxSizeMode.Zoom
+                Dock = DockStyle.Fill,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                BorderStyle = BorderStyle.FixedSingle
             };
-
+            // ===== request =====
             label_quiz = new Label()
             {
                 Text = "Which option is target?",
-                // Location = new Point(600, 200),
-                Dock = DockStyle.Right,
-                Height = 40,
-                // AutoSize = true
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold)
             };
 
-            label_score = new Label()
+            // ===== button（1x4）=====
+            TableLayoutPanel buttonLayout = new TableLayoutPanel()
             {
-                Text = $"score:{history_quest.Count}",
-                Dock = DockStyle.Bottom,
-                Height = 40
+                Dock = DockStyle.Fill,
+                RowCount = 4,
+                // Padding = new Padding(20)
             };
+
+            buttonLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
+            buttonLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
+            buttonLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
+            buttonLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
+
+            button_option_A = CreateButton("Option A", OptionButton_ClickA);
+            button_option_B = CreateButton("Option B", OptionButton_ClickB);
+            button_option_C = CreateButton("Option C", OptionButton_ClickC);
+            button_option_Refresh = CreateButton("Refresh", OptionButton_Refresh);
+
+            buttonLayout.Controls.Add(button_option_A, 0, 0);
+            buttonLayout.Controls.Add(button_option_B, 0, 1);
+            buttonLayout.Controls.Add(button_option_C, 0, 2);
+            buttonLayout.Controls.Add(button_option_Refresh, 0, 3);
+
+            // ===== Bottom =====
+            TableLayoutPanel bottomPanel = new TableLayoutPanel()
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 2,
+            };
+            bottomPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+            bottomPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
 
             label_result = new Label()
             {
                 Text = "",
-                Dock = DockStyle.Bottom,
-                Height = 40
+                Dock = DockStyle.Fill
             };
 
-            button_option_A = new Button()
+            label_score = new Label()
             {
-                Text = "option A",
-                Dock = DockStyle.Right,
-                Height = 40
+                Text = $"Score: {history_quest.Count}",
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Dock = DockStyle.Fill
             };
-            button_option_A.Click += OptionButton_ClickA;
 
-            button_option_B = new Button()
-            {
-                Text = "option B",
-                Dock = DockStyle.Right,
-                Height = 40
-            };
-            button_option_B.Click += OptionButton_ClickB;
+            bottomPanel.Controls.Add(label_result, 0, 0);
+            bottomPanel.Controls.Add(label_score, 0, 1);
 
-            button_option_C = new Button()
-            {
-                Text = "option C",
-                Dock = DockStyle.Right,
-                Height = 40
-            };
-            button_option_C.Click += OptionButton_ClickC;
+            rightLayout.Controls.Add(label_quiz, 0, 0);
+            rightLayout.Controls.Add(buttonLayout, 0, 1);
+            rightLayout.Controls.Add(bottomPanel, 0, 2);
 
-            button_option_Refresh = new Button()
-            {
-                Text = "Refresh",
-                Dock = DockStyle.Right,
-                Height = 40
-            };
-            button_option_Refresh.Click += OptionButton_Refresh;
+            // ===== add main Layout =====
+            mainLayout.Controls.Add(pictureBox, 0, 0);
+            mainLayout.Controls.Add(rightLayout, 1, 0);
 
-            Controls.Add(pictureBox);
-            Controls.Add(label_quiz);
-            Controls.Add(label_score);
-            Controls.Add(label_result);
-            Controls.Add(button_option_A);
-            Controls.Add(button_option_B);
-            Controls.Add(button_option_C);
-            Controls.Add(button_option_Refresh);
+            this.Controls.Add(mainLayout);
         }
 
         void LoadImage()
