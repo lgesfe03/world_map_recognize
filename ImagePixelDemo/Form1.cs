@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
@@ -11,13 +12,49 @@ public class CityData
     public int Longitude { get; set; }
     // ... other properties
 }
+public class Properties
+{
+    [JsonPropertyName("COUNTRY")]
+    public string Country { get; set; }
+}
 
+public class Geometry
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } // e.g., "Point", "LineString", "Polygon"
+
+    [JsonPropertyName("coordinates")]
+    // This is the problematic part that needs a custom converter or a dynamic approach 
+    // because the List nesting depth changes based on the 'Type' property.
+    public List<float> Coordinates { get; set; }
+}
+public class Feature
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "Feature";
+
+    [JsonPropertyName("properties")]
+    public Properties Properties { get; set; }
+
+    [JsonPropertyName("geometry")]
+    public Geometry Geometry { get; set; }
+}
+
+public class RootObject // Represents a FeatureCollection
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "FeatureCollection";
+
+    [JsonPropertyName("features")]
+    public List<Feature> Features { get; set; }
+}
 namespace ImagePixelDemo
 {
     public class Form1 : Form
     {
         int quest_this_round;
         int score;
+        RootObject myDeserializedClass;
         List<int> history_quest;
         List<int> option_list_each_round;
         Random random;
@@ -38,9 +75,11 @@ namespace ImagePixelDemo
         {
             InitVariable();
             InitJson();
+            // geojson_parse();
             InitUI();
             LoadImage();
             markNumberOnImage();
+            // markNumberOnEmptyImage();
             prepare_quest_and_option();
             PaintQuizArea(quest_this_round);
         }
@@ -71,6 +110,22 @@ namespace ImagePixelDemo
             foreach (var city in List_cities)
             {
                 Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
+            }
+        }
+        void geojson_parse()
+        {
+            string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                "json",
+                "countries.geojson"
+            );
+            string geoJsonString = File.ReadAllText(jsonPath);
+            myDeserializedClass = JsonSerializer.Deserialize<RootObject>(geoJsonString);
+
+            for (int i = 0; i < myDeserializedClass.Features.Count; i++)
+            {
+                Console.WriteLine($"Country[{i}]:{myDeserializedClass.Features[i].Properties.Country}, Lat:{myDeserializedClass.Features[i].Geometry.Coordinates[0]}, Lng:{myDeserializedClass.Features[i].Geometry.Coordinates[1]}");
+                myDeserializedClass.Features[i].Geometry.Coordinates[0] = (myDeserializedClass.Features[i].Geometry.Coordinates[0] + 180) * 1;
+                myDeserializedClass.Features[i].Geometry.Coordinates[1] = (myDeserializedClass.Features[i].Geometry.Coordinates[1] - 90) * (-1) * 1;
             }
         }
         Button CreateButton(string text, EventHandler click)
@@ -205,6 +260,32 @@ namespace ImagePixelDemo
 
             bitmap = new Bitmap(imagePath);
             pictureBox.Image = bitmap;
+        }
+        void markNumberOnEmptyImage()
+        {
+
+            for (int i = 0; i < myDeserializedClass.Features.Count; i++)
+            {
+                Console.WriteLine($"Country[{i}]:{myDeserializedClass.Features[i].Properties.Country}, Lat:{myDeserializedClass.Features[i].Geometry.Coordinates[0]}, Lng:{myDeserializedClass.Features[i].Geometry.Coordinates[1]}");
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    // Optional: Fill the background if needed
+                    // g.Clear(Color.White); 
+
+                    // 3. Define the Font and Brush for the text
+                    using (Font myFont = new Font("Arial", 6, FontStyle.Regular))
+                    using (Brush myBrush = new SolidBrush(Color.Black))
+                    {
+                        // Set rendering hint for smooth text
+                        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+                        // 4. Draw the string onto the Bitmap
+                        // Parameters: text, font, brush, x-coordinate, y-coordinate
+                        g.DrawString(i.ToString(), myFont, myBrush, new Point((int)myDeserializedClass.Features[i].Geometry.Coordinates[0], (int)myDeserializedClass.Features[i].Geometry.Coordinates[1]));
+                    }
+                }
+            }
+            pictureBox.Refresh();
         }
         void markNumberOnImage()
         {
