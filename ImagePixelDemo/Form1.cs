@@ -31,7 +31,7 @@ namespace ImagePixelDemo
         Label label_result;
 
         Bitmap bitmap;
-        List<CityData> cities;
+        List<CityData> List_cities;
         int options_number = 3;
 
         public Form1()
@@ -40,6 +40,7 @@ namespace ImagePixelDemo
             InitJson();
             InitUI();
             LoadImage();
+            markNumberOnImage();
             prepare_quest_and_option();
             PaintQuizArea(quest_this_round);
         }
@@ -64,10 +65,10 @@ namespace ImagePixelDemo
                 return;
             }
             string jsonString = File.ReadAllText(jsonPath);
-            cities = JsonSerializer.Deserialize<List<CityData>>(jsonString);
-            Console.WriteLine($"{"cities.Count:"}{cities.Count()})");
+            List_cities = JsonSerializer.Deserialize<List<CityData>>(jsonString);
+            Console.WriteLine($"{"List_cities.Count:"}{List_cities.Count()})");
 
-            foreach (var city in cities)
+            foreach (var city in List_cities)
             {
                 Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
             }
@@ -169,6 +170,34 @@ namespace ImagePixelDemo
             bitmap = new Bitmap(imagePath);
             pictureBox.Image = bitmap;
         }
+        void markNumberOnImage()
+        {
+            int index = 0 + 1;
+            foreach (var city in List_cities)
+            {
+                Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
+                // 2. Get a Graphics object from the Bitmap
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    // Optional: Fill the background if needed
+                    // g.Clear(Color.White); 
+
+                    // 3. Define the Font and Brush for the text
+                    using (Font myFont = new Font("Arial", 8, FontStyle.Bold))
+                    using (Brush myBrush = new SolidBrush(Color.Black))
+                    {
+                        // Set rendering hint for smooth text
+                        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+                        // 4. Draw the string onto the Bitmap
+                        // Parameters: text, font, brush, x-coordinate, y-coordinate
+                        g.DrawString(index.ToString(), myFont, myBrush, new Point(city.Latitude, city.Longitude));
+                    }
+                }
+                index++;
+            }
+            pictureBox.Refresh();
+        }
         void update_quiz(string string_in)
         {
             label_quiz.Text = string_in;
@@ -202,6 +231,7 @@ namespace ImagePixelDemo
         void OptionButton_Refresh(object sender, EventArgs e)
         {
             LoadImage();
+            markNumberOnImage();
             prepare_quest_and_option();
             PaintQuizArea(quest_this_round);
             switch_all_option_button(true);
@@ -216,7 +246,7 @@ namespace ImagePixelDemo
         }
         void PaintQuizArea(int index)
         {
-            PaintArea(cities[index].Latitude, cities[index].Longitude, 25, 25);
+            PaintArea(List_cities[index].Latitude, List_cities[index].Longitude, 25, 25);
             pictureBox.Refresh();
         }
         void PaintArea(int cx, int cy, int w, int h)
@@ -249,16 +279,16 @@ namespace ImagePixelDemo
             Console.WriteLine($"history_quest count:{history_quest.Count}");
             while (true)
             {
-                int temp_new_quest = random.Next(0, cities.Count);
+                int temp_new_quest = random.Next(0, List_cities.Count);
                 if (!history_quest.Contains(temp_new_quest))
                 {
                     Console.WriteLine($"temp_new_quest :{temp_new_quest}");
                     quest_this_round = temp_new_quest;
                     break;
                 }
-                else if (history_quest.Count >= cities.Count)
+                else if (history_quest.Count >= List_cities.Count)
                 {
-                    Console.WriteLine($"all quest had been shuffled :{cities.Count}");
+                    Console.WriteLine($"all quest had been shuffled :{List_cities.Count}");
                     history_quest.Clear();
                 }
             }
@@ -273,7 +303,7 @@ namespace ImagePixelDemo
                 {
                     break;
                 }
-                int value = random.Next(0, cities.Count);
+                int value = random.Next(0, List_cities.Count);
                 if (!option_list_each_round.Contains(value))
                 {
                     option_list_each_round.Add(value);
@@ -294,18 +324,18 @@ namespace ImagePixelDemo
             foreach (var card in cards_options)
             {
                 console_index++;
-                Console.WriteLine($"{console_index}.{cities[card].CityName}({card})");
+                Console.WriteLine($"{console_index}.{List_cities[card].CityName}({card})");
                 if (console_index == 1)
                 {
-                    button_option_A.Text = $"{"A"}.{cities[card].CityName}";
+                    button_option_A.Text = $"{"A"}.{List_cities[card].CityName}";
                 }
                 else if (console_index == 2)
                 {
-                    button_option_B.Text = $"{"B"}.{cities[card].CityName}";
+                    button_option_B.Text = $"{"B"}.{List_cities[card].CityName}";
                 }
                 else if (console_index == 3)
                 {
-                    button_option_C.Text = $"{"C"}.{cities[card].CityName}";
+                    button_option_C.Text = $"{"C"}.{List_cities[card].CityName}";
                 }
             }
         }
@@ -321,12 +351,12 @@ namespace ImagePixelDemo
             int choose_answer = option_list_each_round[choose_option_index];
             if (choose_answer == quest_this_round)
             {
-                update_result($"Correct! {cities[choose_answer].CityName}");
+                update_result($"Correct! {List_cities[choose_answer].CityName}");
                 return true;
             }
             else
             {
-                update_result($"False! not {cities[choose_answer].CityName}({choose_answer + 1}), answer is {cities[quest_this_round].CityName}({quest_this_round + 1})");
+                update_result($"False! not {List_cities[choose_answer].CityName}({choose_answer + 1}), answer is {List_cities[quest_this_round].CityName}({quest_this_round + 1})");
                 return false;
             }
         }
@@ -338,7 +368,7 @@ namespace ImagePixelDemo
                 history_quest.Add(quest_this_round);
                 score++;
                 update_score();
-                if (score % cities.Count == 0)
+                if (score % List_cities.Count == 0)
                 {
                     MessageBox.Show("Congratulate! All request done!");
                 }
