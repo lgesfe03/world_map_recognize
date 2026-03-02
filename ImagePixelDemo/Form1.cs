@@ -175,7 +175,6 @@ namespace ImagePixelDemo
             int index = 0 + 1;
             foreach (var city in List_cities)
             {
-                Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
                 // 2. Get a Graphics object from the Bitmap
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
@@ -251,8 +250,8 @@ namespace ImagePixelDemo
         }
         void PaintArea(int cx, int cy, int w, int h)
         {
-            int sx = cx - w / 2;
-            int sy = cy - h / 2;
+            int sx = cx - w / 4;
+            int sy = cy - h / 4;
 
             float alpha = 0.4f;   // 40% transparency 
 
