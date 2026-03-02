@@ -26,7 +26,7 @@ public class Geometry
     [JsonPropertyName("coordinates")]
     // This is the problematic part that needs a custom converter or a dynamic approach 
     // because the List nesting depth changes based on the 'Type' property.
-    public object Coordinates { get; set; }
+    public List<float> Coordinates { get; set; }
 }
 public class Feature
 {
@@ -78,9 +78,11 @@ class Program
         RootObject myDeserializedClass = JsonSerializer.Deserialize<RootObject>(geoJsonString);
 
         // Console.WriteLine($"{"myDeserializedClass.Features[0].Properties.Country : "}{myDeserializedClass.Features[0].Properties.Country})");
-        foreach (var feature in myDeserializedClass.Features)
+        for (int i = 0; i < myDeserializedClass.Features.Count; i++)
         {
-            Console.WriteLine($"{"Features[n].Properties.Country : "}{feature.Properties.Country}");
+            // Console.WriteLine($"Features[n].Properties.Country : {myDeserializedClass.Features[i].Properties.Country},");
+            Console.WriteLine($"Country[{i}]:{myDeserializedClass.Features[i].Properties.Country}, Lat:{myDeserializedClass.Features[i].Geometry.Coordinates[0]}, Lng:{myDeserializedClass.Features[i].Geometry.Coordinates[1]}");
+            // Console.WriteLine($"Features[n].Coordinates : {myDeserializedClass.Features[i].Geometry.Coordinates}");
         }
     }
     static void Main(string[] args)
