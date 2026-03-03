@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
+
 public class CityData
 {
     public string CityName { get; set; }
@@ -52,6 +53,8 @@ namespace ImagePixelDemo
 {
     public class Form1 : Form
     {
+        string TARGET_JSON;
+        string TARGET_IMG;
         int quest_this_round;
         int score;
         RootObject myDeserializedClass;
@@ -75,11 +78,10 @@ namespace ImagePixelDemo
         {
             InitVariable();
             InitJson();
-            // geojson_parse();
+            geojson_parse();
             InitUI();
             LoadImage();
             markNumberOnImage();
-            // markNumberOnEmptyImage();
             prepare_quest_and_option();
             PaintQuizArea(quest_this_round);
         }
@@ -88,12 +90,23 @@ namespace ImagePixelDemo
             history_quest = new List<int>();
             option_list_each_round = new List<int>();
             random = new Random();
+            if (false)
+            {
+
+                TARGET_JSON = "countries.geojson";
+                TARGET_IMG = "empty.jpg";
+            }
+            else
+            {
+                TARGET_JSON = "taiwan_cities.json";
+                TARGET_IMG = "taiwan.jpg";
+            }
         }
         void InitJson()
         {
             string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
                 "json",
-                "taiwan_cities.json"
+                TARGET_JSON
             );
             Console.WriteLine($"{"BaseDirectory:"}{AppDomain.CurrentDomain.BaseDirectory})");
             Console.WriteLine($"{"Image Path:"}{jsonPath})");
@@ -104,12 +117,20 @@ namespace ImagePixelDemo
                 return;
             }
             string jsonString = File.ReadAllText(jsonPath);
-            List_cities = JsonSerializer.Deserialize<List<CityData>>(jsonString);
-            Console.WriteLine($"{"List_cities.Count:"}{List_cities.Count()})");
-
-            foreach (var city in List_cities)
+            if (TARGET_JSON == "countries.geojson")
             {
-                Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
+                myDeserializedClass = JsonSerializer.Deserialize<RootObject>(jsonString);
+                Console.WriteLine($"{"myDeserializedClass.Count:"}{myDeserializedClass.Features.Count})");
+            }
+            else
+            {
+                List_cities = JsonSerializer.Deserialize<List<CityData>>(jsonString);
+                Console.WriteLine($"{"List_cities.Count:"}{List_cities.Count()})");
+
+                foreach (var city in List_cities)
+                {
+                    Console.WriteLine($"Name: {city.CityName}, Latitude: {city.Latitude}, Longitude: {city.Longitude}");
+                }
             }
         }
         void geojson_parse()
@@ -247,7 +268,7 @@ namespace ImagePixelDemo
 
             string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
                 "image",
-                "taiwan.jpg"
+                TARGET_IMG
             );
             Console.WriteLine($"{"BaseDirectory:"}{AppDomain.CurrentDomain.BaseDirectory})");
             Console.WriteLine($"{"Image Path:"}{imagePath})");
@@ -281,13 +302,24 @@ namespace ImagePixelDemo
 
                         // 4. Draw the string onto the Bitmap
                         // Parameters: text, font, brush, x-coordinate, y-coordinate
-                        g.DrawString(i.ToString(), myFont, myBrush, new Point((int)myDeserializedClass.Features[i].Geometry.Coordinates[0], (int)myDeserializedClass.Features[i].Geometry.Coordinates[1]));
+                        g.DrawString(myDeserializedClass.Features[i].Properties.Country, myFont, myBrush, new Point((int)myDeserializedClass.Features[i].Geometry.Coordinates[0], (int)myDeserializedClass.Features[i].Geometry.Coordinates[1]));
                     }
                 }
             }
             pictureBox.Refresh();
         }
         void markNumberOnImage()
+        {
+            if (TARGET_JSON == "countries.geojson")
+            {
+                markNumberOnEmptyImage();
+            }
+            else
+            {
+                markNumberOnFullImage();
+            }
+        }
+        void markNumberOnFullImage()
         {
             int index = 0 + 1;
             foreach (var city in List_cities)
@@ -364,7 +396,14 @@ namespace ImagePixelDemo
         {
             // PaintArea(List_cities[index].Latitude, List_cities[index].Longitude, 25, 25);//old method
             // Apply the color fill to white pixels
-            PaintWhiteConnectedArea(List_cities[index].Latitude, List_cities[index].Longitude);
+            if (TARGET_JSON == "countries.geojson")
+            {
+                PaintWhiteConnectedArea((int)myDeserializedClass.Features[index].Geometry.Coordinates[0], (int)myDeserializedClass.Features[index].Geometry.Coordinates[1]);
+            }
+            else
+            {
+                PaintWhiteConnectedArea(List_cities[index].Latitude, List_cities[index].Longitude);
+            }
             // PaintNumberArea(List_cities[index].Latitude, List_cities[index].Longitude, 25, 25);
             pictureBox.Refresh();
         }
@@ -450,24 +489,26 @@ namespace ImagePixelDemo
         void shuffle_quest_not_existed()
         {
             Console.WriteLine($"history_quest count:{history_quest.Count}");
+            int quest_count = TARGET_JSON == "countries.geojson" ? myDeserializedClass.Features.Count : List_cities.Count;
             while (true)
             {
-                int temp_new_quest = random.Next(0, List_cities.Count);
+                int temp_new_quest = random.Next(0, quest_count);
                 if (!history_quest.Contains(temp_new_quest))
                 {
                     Console.WriteLine($"temp_new_quest :{temp_new_quest}");
                     quest_this_round = temp_new_quest;
                     break;
                 }
-                else if (history_quest.Count >= List_cities.Count)
+                else if (history_quest.Count >= quest_count)
                 {
-                    Console.WriteLine($"all quest had been shuffled :{List_cities.Count}");
+                    Console.WriteLine($"all quest had been shuffled :{quest_count}");
                     history_quest.Clear();
                 }
             }
         }
         void fill_remain_option()
         {
+            int quest_count = TARGET_JSON == "countries.geojson" ? myDeserializedClass.Features.Count : List_cities.Count;
             option_list_each_round.Clear();
             option_list_each_round.Add(quest_this_round);
             while (true)
@@ -476,7 +517,7 @@ namespace ImagePixelDemo
                 {
                     break;
                 }
-                int value = random.Next(0, List_cities.Count);
+                int value = random.Next(0, quest_count);
                 if (!option_list_each_round.Contains(value))
                 {
                     option_list_each_round.Add(value);
@@ -494,21 +535,45 @@ namespace ImagePixelDemo
         void fill_option_button(List<int> cards_options)
         {
             int console_index = 0;
-            foreach (var card in cards_options)
+            if (TARGET_JSON == "countries.geojson")
             {
-                console_index++;
-                Console.WriteLine($"{console_index}.{List_cities[card].CityName}({card})");
-                if (console_index == 1)
+
+                foreach (var card in cards_options)
                 {
-                    button_option_A.Text = $"{"A"}.{List_cities[card].CityName}";
+                    console_index++;
+                    Console.WriteLine($"{console_index}.{myDeserializedClass.Features[card].Properties.Country}({card})");
+                    if (console_index == 1)
+                    {
+                        button_option_A.Text = $"{"A"}.{myDeserializedClass.Features[card].Properties.Country}";
+                    }
+                    else if (console_index == 2)
+                    {
+                        button_option_B.Text = $"{"B"}.{myDeserializedClass.Features[card].Properties.Country}";
+                    }
+                    else if (console_index == 3)
+                    {
+                        button_option_C.Text = $"{"C"}.{myDeserializedClass.Features[card].Properties.Country}";
+                    }
                 }
-                else if (console_index == 2)
+            }
+            else
+            {
+                foreach (var card in cards_options)
                 {
-                    button_option_B.Text = $"{"B"}.{List_cities[card].CityName}";
-                }
-                else if (console_index == 3)
-                {
-                    button_option_C.Text = $"{"C"}.{List_cities[card].CityName}";
+                    console_index++;
+                    Console.WriteLine($"{console_index}.{List_cities[card].CityName}({card})");
+                    if (console_index == 1)
+                    {
+                        button_option_A.Text = $"{"A"}.{List_cities[card].CityName}";
+                    }
+                    else if (console_index == 2)
+                    {
+                        button_option_B.Text = $"{"B"}.{List_cities[card].CityName}";
+                    }
+                    else if (console_index == 3)
+                    {
+                        button_option_C.Text = $"{"C"}.{List_cities[card].CityName}";
+                    }
                 }
             }
         }
@@ -535,13 +600,14 @@ namespace ImagePixelDemo
         }
         void compare_and_update_result(int choose_option_index)
         {
+            int quest_count = TARGET_JSON == "countries.geojson" ? myDeserializedClass.Features.Count : List_cities.Count;
             bool is_correct = IsAnswerCorrect(choose_option_index);
             if (is_correct)
             {
                 history_quest.Add(quest_this_round);
                 score++;
                 update_score();
-                if (score % List_cities.Count == 0)
+                if (score % quest_count == 0)
                 {
                     MessageBox.Show("Congratulate! All request done!");
                 }
